@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0b10">
+<title>CppSekai</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0b0b10; overflow: hidden; }
+  #canvas { display: block; width: 100%; height: 100%; outline: none; touch-action: none; }
+  #status {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    color: #8892a6; font: 12px/1.6 ui-monospace, Consolas, monospace;
+    padding: 6px 10px; background: rgba(8,8,12,.72); pointer-events: none; white-space: pre-wrap;
+  }
+  #status.hidden { display: none; }
+</style>
+</head>
+<body>
+<canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+<div id="status">booting…</div>
+<script>
+  // The game itself is main.cpp (the unmodified Windows source). The page only
+  // supplies the canvas: EGL reads Module.canvas when it creates the WebGL
+  // context, and the emscripten runtime reports load progress through setStatus.
+  var Module = {
+    canvas: document.getElementById('canvas'),
+    setStatus: function (text) {
+      var el = document.getElementById('status');
+      if (!el) return;
+      if (text) {
+        el.textContent = text;
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+  };
+</script>
+{{{ SCRIPT }}}
+<script>
+  (function () {
+    var el = document.getElementById('status');
+    window.addEventListener('error', function (e) {
+      if (el) { el.textContent = 'error: ' + (e.message || e.type); el.classList.remove('hidden'); }
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      if (el) { el.textContent = 'rejection: ' + ((e.reason && e.reason.message) || e.reason); el.classList.remove('hidden'); }
+    });
+  })();
+</script>
+</body>
+</html>

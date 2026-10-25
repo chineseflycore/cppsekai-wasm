@@ -1,0 +1,10 @@
+# Build outputs and private assets
+build-web/
+dist/
+assets/
+charts/
+*.zip
+*.log
+.workbuddy/
+web/edge-*/
+web/probe*.png
